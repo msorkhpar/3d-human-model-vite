@@ -1,4 +1,3 @@
-
 import {
     ACESFilmicToneMapping,
     AmbientLight,
@@ -7,7 +6,8 @@ import {
     PerspectiveCamera,
     PMREMGenerator,
     Scene,
-    Vector3, WebGLRenderer
+    Vector3,
+    WebGLRenderer
 } from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -21,6 +21,7 @@ import {degToRad} from "three/src/math/MathUtils.js";
 import {SVGRenderer} from "three/addons/renderers/SVGRenderer.js";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import body_url from './body.glb'
+
 export class CameraData {
     constructor(attribute_info) {
         let camera_info = attribute_info.split(" ")
@@ -46,6 +47,7 @@ export const camera = new PerspectiveCamera(
 );
 camera.useQuaternion = true;
 let is_back_view = false
+let is_animating = false;
 
 export function set_back_view(is_back) {
     is_back_view = is_back
@@ -86,6 +88,9 @@ dracoLoader.setDecoderPath('https://unpkg.com/three@0.153.0/examples/jsm/libs/dr
 loader.setDRACOLoader(dracoLoader);
 
 function meshHandleHover(event) {
+    if (is_animating) {
+        return
+    }
     if (event.type === 'mouseover') {
         let new_material = event.target.material.clone();
         new_material.color.set(0xff0000);
@@ -203,6 +208,7 @@ function animate(callback) {
         callback(time);
         requestAnimationFrame(loop);
     }
+
     requestAnimationFrame(loop);
 }
 
@@ -237,6 +243,7 @@ function export_scene_as_svg() {
 }
 
 export function animateCamera(source_camera, destination_camera, callback, duration = 1000) {
+    is_animating = true
     let to_data = {
         x: source_camera.x,
         y: source_camera.y,
@@ -264,6 +271,7 @@ export function animateCamera(source_camera, destination_camera, callback, durat
         .onComplete(() => {
             //export_scene_as_svg()
             callback()
+            is_animating = false
         })
         .start();
 }
