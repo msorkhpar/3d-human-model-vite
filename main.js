@@ -1,4 +1,3 @@
-
 import {
     ACESFilmicToneMapping,
     AmbientLight,
@@ -7,7 +6,8 @@ import {
     PerspectiveCamera,
     PMREMGenerator,
     Scene,
-    Vector3, WebGLRenderer
+    Vector3,
+    WebGLRenderer
 } from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -21,6 +21,7 @@ import {degToRad} from "three/src/math/MathUtils.js";
 import {SVGRenderer} from "three/addons/renderers/SVGRenderer.js";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import body_url from './body.glb'
+
 export class CameraData {
     constructor(attribute_info) {
         let camera_info = attribute_info.split(" ")
