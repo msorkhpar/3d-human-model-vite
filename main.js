@@ -47,6 +47,7 @@ export const camera = new PerspectiveCamera(
 );
 camera.useQuaternion = true;
 let is_back_view = false
+let is_animating = false;
 
 export function set_back_view(is_back) {
     is_back_view = is_back
@@ -87,6 +88,9 @@ dracoLoader.setDecoderPath('https://unpkg.com/three@0.153.0/examples/jsm/libs/dr
 loader.setDRACOLoader(dracoLoader);
 
 function meshHandleHover(event) {
+    if (is_animating) {
+        return
+    }
     if (event.type === 'mouseover') {
         let new_material = event.target.material.clone();
         new_material.color.set(0xff0000);
@@ -204,6 +208,7 @@ function animate(callback) {
         callback(time);
         requestAnimationFrame(loop);
     }
+
     requestAnimationFrame(loop);
 }
 
@@ -238,6 +243,7 @@ function export_scene_as_svg() {
 }
 
 export function animateCamera(source_camera, destination_camera, callback, duration = 1000) {
+    is_animating = true
     let to_data = {
         x: source_camera.x,
         y: source_camera.y,
@@ -265,6 +271,7 @@ export function animateCamera(source_camera, destination_camera, callback, durat
         .onComplete(() => {
             //export_scene_as_svg()
             callback()
+            is_animating = false
         })
         .start();
 }
