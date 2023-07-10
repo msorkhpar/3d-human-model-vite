@@ -1,18 +1,29 @@
 {
-  "name": "vite",
-  "version": "0.0.0",
-  "type": "module",
+  "name": "human-3d-model",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@tweenjs/tween.js": "^21.0.0",
-    "three": "^0.153.0",
-    "three.interactive": "^1.7.0"
-  },
-  "devDependencies": {
-    "vite": "^4.1.0"
+    "@react-three/drei": "^9.78.1",
+    "@react-three/fiber": "^8.13.4",
+    "@types/node": "20.4.1",
+    "@types/react": "18.2.14",
+    "@types/react-dom": "18.2.6",
+    "@types/three": "^0.153.0",
+    "autoprefixer": "10.4.14",
+    "eslint": "8.44.0",
+    "eslint-config-next": "13.4.9",
+    "next": "13.4.9",
+    "postcss": "8.4.25",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "3.3.2",
+    "three": "^0.154.0",
+    "typescript": "5.1.6"
   }
 }
