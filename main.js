@@ -139,14 +139,14 @@ function meshHandleHover(event) {
 loader.load(body_url, function (gltf) {
     let areas = [...gltf.scenes[0].children[0].children]
     for (let i = 0; i < areas.length; i++) {
-        areas[i].rotateX(degToRad(-90))
+        //areas[i].rotateX(degToRad(-90))
         //areas[i].material = new MeshPhongMaterial({ flatShading: false });
         areas[i].geometry.deleteAttribute('normal')
         areas[i].geometry = BufferGeometryUtils.mergeVertices(areas[i].geometry, 1e-6)
         areas[i].geometry.computeVertexNormals()
 
 
-        let names = {"Layer_1": true, "02_Face001": true}
+        let names = {"Model_the_full_body_": true}
         if (names[areas[i].name]) {
             let new_material = areas[i].material.clone();
             new_material.polygonOffset = true;
