@@ -17,7 +17,6 @@ import * as TWEEN from '@tweenjs/tween.js';
 import {change_level} from "./body.js";
 import Stats from "three/addons/libs/stats.module.js";
 import {InteractionManager} from "three.interactive";
-import {degToRad} from "three/src/math/MathUtils.js";
 import {SVGRenderer} from "three/addons/renderers/SVGRenderer.js";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 import body_url from './body.glb'
@@ -86,18 +85,74 @@ const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://unpkg.com/three@0.153.0/examples/jsm/libs/draco/');
 loader.setDRACOLoader(dracoLoader);
 
+let is_on_face = false
+
 function meshHandleHover(event) {
+    const target_name = event.target.name
+    let new_material = event.target.material.clone();
+
     if (event.type === 'mouseover') {
-        let new_material = event.target.material.clone();
+        if (target_name.startsWith("SA") && is_on_face === false) {
+            scene.traverse(function (subject) {
+                    if (subject.name === "02_Face") {
+                        let material = subject.material.clone();
+                        material.color.set(0xff0000);
+                        subject.material = material
+                        document.body.style.cursor = 'pointer';
+                    }
+                }
+            )
+            return
+        }
         new_material.color.set(0xff0000);
         event.target.material = new_material;
+        //new_material.opacity = 0.5
         document.body.style.cursor = 'pointer';
     } else if (event.type === 'mouseout') {
-        let new_material = event.target.material.clone();
+        if (target_name.startsWith("SA") && is_on_face === false) {
+            scene.traverse(function (subject) {
+                    if (subject.name === "02_Face") {
+                        let material = subject.material.clone();
+                        material.color.set(0xffffff);
+                        subject.material = material
+                    }
+                }
+            )
+            return
+        }
         new_material.color.set(0xffffff);
         event.target.material = new_material;
         document.body.style.cursor = 'default';
     } else if (event.type === 'click') {
+        if (target_name.startsWith("SA")) {
+            is_on_face = true
+            scene.traverse(function (subject) {
+                    if (subject.isMesh) {
+                        let material = subject.material.clone();
+                        material.color.set(0xffffff);
+                        if (subject.name.startsWith("SA")) {
+                            material.alphaTest = 0;
+                            material.opacity = 1;
+                        }
+                        subject.material = material
+                    }
+                }
+            )
+        } else if (target_name !== "02_Face" && is_on_face === true) {
+            is_on_face = false
+            scene.traverse(function (subject) {
+                    if (subject.isMesh) {
+                        let material = subject.material.clone();
+                        material.color.set(0xffffff);
+                        if (subject.name.startsWith("SA")) {
+                            material.alphaTest = 1;
+                            material.opacity = 0;
+                        }
+                        subject.material = material
+                    }
+                }
+            )
+        }
         const boundingBox = new Box3().setFromObject(event.target);
         // Get the dimensions (width, height, depth)
         const width = boundingBox.max.x - boundingBox.min.x;
@@ -141,34 +196,45 @@ loader.load(body_url, function (gltf) {
         areas[i].geometry = BufferGeometryUtils.mergeVertices(areas[i].geometry, 1e-6)
         areas[i].geometry.computeVertexNormals()
 
-
-        let names = {"Model_the_full_body_": true}
-        if (names[areas[i].name]) {
-            let new_material = areas[i].material.clone();
+        let new_material = areas[i].material.clone();
+        // let names = {"Model": true}
+        // if (names[areas[i].name]) {
+        //     continue
+        //     new_material.polygonOffset = true;
+        //     new_material.polygonOffsetUnits = 1;
+        //     new_material.polygonOffsetFactor = 10;
+        //     areas[i].material = new_material;
+        //     scene.add(areas[i]);
+        // } else {
+        areas[i].addEventListener('mouseover', meshHandleHover);
+        areas[i].addEventListener('mouseout', meshHandleHover);
+        areas[i].addEventListener('click', meshHandleHover);
+        if (areas[i].name === "02_Face") {
             new_material.polygonOffset = true;
             new_material.polygonOffsetUnits = 1;
-            new_material.polygonOffsetFactor = 10;
+            new_material.polygonOffsetFactor = 5;
+            new_material.opacity = 1
+            new_material.transparent = true;
             areas[i].material = new_material;
             scene.add(areas[i]);
+            interactionManager.add(areas[i]);
         } else {
-            areas[i].addEventListener('mouseover', meshHandleHover);
-            areas[i].addEventListener('mouseout', meshHandleHover);
-            areas[i].addEventListener('click', meshHandleHover);
-
-            if (areas[i].name === "02_Face") {
-                let new_material = areas[i].material.clone();
-                new_material.polygonOffset = true;
-                new_material.polygonOffsetUnits = 1;
-                new_material.polygonOffsetFactor = 3;
-                areas[i].material = new_material;
-                scene.add(areas[i]);
-                interactionManager.add(areas[i]);
-            } else {
-                scene.add(areas[i]);
-                interactionManager.add(areas[i]);
-            }
+            scene.add(areas[i]);
+            interactionManager.add(areas[i]);
         }
+
+        //}
     }
+
+    scene.traverse(function (subject) {
+        if (subject.name.startsWith("SA")) {
+            let material = subject.material.clone();
+            material.transparent = true;
+            material.alphaTest = 1;
+            material.opacity = 0
+            subject.material = material
+        }
+    })
 
     camera.updateProjectionMatrix()
     renderer.toneMapping = Number(ACESFilmicToneMapping);
