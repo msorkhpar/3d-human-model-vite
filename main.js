@@ -92,7 +92,7 @@ function meshHandleHover(event) {
     let new_material = event.target.material.clone();
 
     if (event.type === 'mouseover') {
-        if (target_name.startsWith("SA") && is_on_face === false) {
+        if (is_back_view === false && target_name.startsWith("SA") && is_on_face === false) {
             scene.traverse(function (subject) {
                     if (subject.name === "02_Face") {
                         let material = subject.material.clone();
@@ -109,7 +109,7 @@ function meshHandleHover(event) {
         //new_material.opacity = 0.5
         document.body.style.cursor = 'pointer';
     } else if (event.type === 'mouseout') {
-        if (target_name.startsWith("SA") && is_on_face === false) {
+        if (is_back_view === false && target_name.startsWith("SA") && is_on_face === false) {
             scene.traverse(function (subject) {
                     if (subject.name === "02_Face") {
                         let material = subject.material.clone();
@@ -124,7 +124,7 @@ function meshHandleHover(event) {
         event.target.material = new_material;
         document.body.style.cursor = 'default';
     } else if (event.type === 'click') {
-        if (target_name.startsWith("SA")) {
+        if (is_back_view === false && target_name.startsWith("SA")) {
             is_on_face = true
             scene.traverse(function (subject) {
                     if (subject.isMesh) {
@@ -138,7 +138,7 @@ function meshHandleHover(event) {
                     }
                 }
             )
-        } else if (target_name !== "02_Face" && is_on_face === true) {
+        } else if (is_back_view === false && target_name !== "02_Face" && is_on_face === true) {
             is_on_face = false
             scene.traverse(function (subject) {
                     if (subject.isMesh) {
