@@ -197,33 +197,31 @@ loader.load(body_url, function (gltf) {
         areas[i].geometry.computeVertexNormals()
 
         let new_material = areas[i].material.clone();
-        // let names = {"Model": true}
-        // if (names[areas[i].name]) {
-        //     continue
-        //     new_material.polygonOffset = true;
-        //     new_material.polygonOffsetUnits = 1;
-        //     new_material.polygonOffsetFactor = 10;
-        //     areas[i].material = new_material;
-        //     scene.add(areas[i]);
-        // } else {
-        areas[i].addEventListener('mouseover', meshHandleHover);
-        areas[i].addEventListener('mouseout', meshHandleHover);
-        areas[i].addEventListener('click', meshHandleHover);
-        if (areas[i].name === "02_Face") {
+        let names = {"Model": true}
+        if (names[areas[i].name]) {
             new_material.polygonOffset = true;
             new_material.polygonOffsetUnits = 1;
-            new_material.polygonOffsetFactor = 5;
-            new_material.opacity = 1
-            new_material.transparent = true;
+            new_material.polygonOffsetFactor = 10;
             areas[i].material = new_material;
             scene.add(areas[i]);
-            interactionManager.add(areas[i]);
         } else {
-            scene.add(areas[i]);
-            interactionManager.add(areas[i]);
+            areas[i].addEventListener('mouseover', meshHandleHover);
+            areas[i].addEventListener('mouseout', meshHandleHover);
+            areas[i].addEventListener('click', meshHandleHover);
+            if (areas[i].name === "02_Face") {
+                new_material.polygonOffset = true;
+                new_material.polygonOffsetUnits = 1;
+                new_material.polygonOffsetFactor = 2;
+                new_material.opacity = 1
+                new_material.transparent = true;
+                areas[i].material = new_material;
+                scene.add(areas[i]);
+                interactionManager.add(areas[i]);
+            } else {
+                scene.add(areas[i]);
+                interactionManager.add(areas[i]);
+            }
         }
-
-        //}
     }
 
     scene.traverse(function (subject) {
